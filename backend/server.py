@@ -1,7 +1,9 @@
 from db.db import get_connection,select_news,insert_news # ← db 폴더 내 db.py에서 함수 import
 from flask import Flask, jsonify
+from flask_cors import CORS
 app = Flask(__name__)
-
+CORS(app)  
+CORS(app, origins=["http://localhost:3000"])
 @app.route("/")
 def check_db_connection():
     try:

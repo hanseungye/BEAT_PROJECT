@@ -7,6 +7,41 @@ function Front() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [economy, setEconomy] = useState([]);
+  const [environment, setEnvironment] = useState([]);
+  const [police, setPolice] = useState([]);
+  const [society, setSociety] = useState([]);
+  const [sport, setSport] = useState([]);
+
+  useEffect(() => {
+  const urlKeyword = ["economy", "environment", "police", "society", "sport"];
+    const setFns = {
+    economy: setEconomy,
+    environment: setEnvironment,
+    police: setPolice,
+    society: setSociety,
+    sport: setSport
+  };
+  urlKeyword.forEach((keyword) => {
+    fetch(`http://localhost:5000/${keyword}`)
+      .then((response) => response.json())
+      .then((data) => {
+        const articles = data.data.map(item => ({
+          id: item.id,
+          title: item.title,
+          image: item.image,
+          publishedAt: item.published_at,
+          url: item.url
+        }));
+          setFns[keyword](articles);
+          console.log(`${keyword} 저장됨:`, articles); // 값 확인
+      })
+      .catch((error) => {
+        console.error(`${keyword} 오류:`, error);
+      });
+  });
+}, []);
+
 
   // 더미 뉴스 데이터 (실제로는 MCP 서버에서 가져올 데이터)
   const mockNews = [
@@ -36,7 +71,7 @@ function Front() {
       summary: "재생 가능 에너지 기술의 발전으로 탄소 중립 목표 달성이 더욱 현실적으로 다가오고 있습니다.",
       source: "환경뉴스",
       publishedAt: "2024-05-25 12:45",
-      category: "환경",  
+      category: "환경",
       url: "#",
       imageUrl: "https://via.placeholder.com/300x200?text=Green+Energy"
     },
@@ -111,8 +146,8 @@ function Front() {
     <div className={styles.newsCard}>
       <div className={styles.newsCardContent}>
         <div className={styles.newsImage}>
-          <img 
-            src={article.imageUrl} 
+          <img
+            src={article.imageUrl}
             alt={article.title}
           />
         </div>
@@ -137,7 +172,7 @@ function Front() {
               <Globe size={16} />
               {article.source}
             </div>
-            <a 
+            <a
               href={article.url}
               className={styles.newsLink}
             >

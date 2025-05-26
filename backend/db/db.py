@@ -19,6 +19,7 @@ def select_news(table):
     query = f"SELECT id, title, url, summary, image, published_at FROM {table} ORDER BY id DESC"
     cur.execute(query) # 데이터베이스 쿼리문을 실행하는 명령어
     rows = cur.fetchall() # 튜플로 반환
+    print(rows)
     columns = [desc[0] for desc in cur.description] # 투플의 0번째 행을 columns에 저장.
     result = [dict(zip(columns,row)) for row in rows]
     cur.close()

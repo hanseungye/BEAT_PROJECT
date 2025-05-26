@@ -51,7 +51,7 @@ for idx, url in enumerate(urls):
         img_filename = ""
         if image_url:
             try:
-                img_data = requests.get(image_url).content
+                img_data = requests.get(image_url).content # jpg 사진을 가져옴.
                 img_filename = f"news_images/news_{idx+1}.jpg"
                 with open(img_filename, "wb") as f:
                     f.write(img_data)

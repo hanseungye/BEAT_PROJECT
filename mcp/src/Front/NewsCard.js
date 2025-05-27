@@ -1,9 +1,8 @@
-// src/Front/NewsCard.js
 import React from 'react';
 import { Clock, ExternalLink, Globe } from 'lucide-react';
 import styles from './Front.module.css';
 
-export default function NewsCard({ article }) {
+function NewsCard({ article }) {
   return (
     <div className={styles.newsCard}>
       <div className={styles.newsCardContent}>
@@ -14,8 +13,7 @@ export default function NewsCard({ article }) {
           <div className={styles.newsMeta}>
             <span className={styles.newsCategory}>{article.category}</span>
             <div className={styles.newsTime}>
-              <Clock size={16} />
-              {article.publishedAt}
+              <Clock size={16} /> {article.publishedAt}
             </div>
           </div>
           <h3 className={styles.newsTitle}>{article.title}</h3>
@@ -24,14 +22,8 @@ export default function NewsCard({ article }) {
             <div className={styles.newsSource}>
               <Globe size={16} />
             </div>
-            <a
-              href={article.url}
-              className={styles.newsLink}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              자세히 보기
-              <ExternalLink size={16} />
+            <a href={article.url} className={styles.newsLink} target="_blank" rel="noopener noreferrer">
+              자세히 보기 <ExternalLink size={16} />
             </a>
           </div>
         </div>
@@ -39,3 +31,4 @@ export default function NewsCard({ article }) {
     </div>
   );
 }
+export default NewsCard;

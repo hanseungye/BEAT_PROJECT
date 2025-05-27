@@ -359,3 +359,42 @@
     padding: 1rem;
   }
 }
+.layoutRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 1350px;
+  margin: 0 auto 30px auto;
+  gap: 32px;
+}
+
+/* 본문 뉴스 리스트(중간 영역) */
+.mainContent {
+  flex: 1 1 720px;
+  min-width: 0;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px #0001;
+  padding: 30px 26px;
+}
+
+/* 오른쪽 추천 뉴스 (사이드바) */
+.recommendSidebar {
+  flex: 0 0 340px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px #0001;
+  padding: 24px 18px;
+  margin-top: 10px;
+  min-height: 340px;
+  position: sticky;
+  top: 95px;
+}
+
+/* 뉴스 카드 그리드 */
+.newsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}

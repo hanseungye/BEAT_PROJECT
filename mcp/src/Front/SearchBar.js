@@ -1,9 +1,8 @@
-// src/Front/SearchBar.js
 import React from 'react';
 import { Search, Loader2 } from 'lucide-react';
 import styles from './Front.module.css';
 
-export default function SearchBar({ searchQuery, setSearchQuery, loading, onSearch }) {
+function SearchBar({ searchQuery, setSearchQuery, loading, onSearch }) {
   return (
     <div className={styles.searchBar}>
       <div className={styles.searchInputWrapper}>
@@ -27,3 +26,4 @@ export default function SearchBar({ searchQuery, setSearchQuery, loading, onSear
     </div>
   );
 }
+export default SearchBar;

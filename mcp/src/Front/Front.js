@@ -1,13 +1,13 @@
-// src/Front/Front.js
 import React, { useState, useEffect } from 'react';
-import { User, Search, Loader2 } from 'lucide-react';
+import { User, Loader2, Search } from 'lucide-react';
 import styles from './Front.module.css';
-
 import NewsCard from './NewsCard';
 import CategoryFilter from './CategoryFilter';
 import SearchBar from './SearchBar';
+import RecommendNews from './RecommendNews';
 
 function Front() {
+  // ===== 상태 변수 =====
   const [searchQuery, setSearchQuery] = useState('');
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -18,6 +18,10 @@ function Front() {
   const [society, setSociety] = useState([]);
   const [sport, setSport] = useState([]);
 
+  // ⭐ AI 추천 뉴스
+  const [recommended, setRecommended] = useState([]);
+
+  // ===== 뉴스 데이터 fetch =====
   useEffect(() => {
     const urlKeyword = ["economy", "environment", "police", "society", "sport"];
     const setFns = {
@@ -27,7 +31,6 @@ function Front() {
       society: setSociety,
       sport: setSport,
     };
-
     urlKeyword.forEach((keyword) => {
       fetch(`http://localhost:5000/${keyword}`)
         .then((response) => response.json())
@@ -47,17 +50,20 @@ function Front() {
           console.error(`${keyword} 오류:`, error);
         });
     });
+
+    // ⭐ 최초 진입시 추천뉴스 (빈 검색어)
+    fetch("http://localhost:5000/recommend")
+      .then(res => res.json())
+      .then(data => setRecommended(data.data))
+      .catch(() => setRecommended([]));
   }, []);
 
+  // ===== 카테고리 필터 =====
   const filterByCategory = (category) => {
     setSelectedCategory(category);
     if (category === '전체') {
       setArticles([
-        ...economy,
-        ...environment,
-        ...police,
-        ...society,
-        ...sport,
+        ...economy, ...environment, ...police, ...society, ...sport
       ]);
     } else if (category === "경제") {
       setArticles(economy);
@@ -72,17 +78,15 @@ function Front() {
     }
   };
 
+  // ===== 카테고리별 데이터가 바뀌면 전체 articles 동기화 =====
   useEffect(() => {
     setArticles([
-      ...economy,
-      ...environment,
-      ...police,
-      ...society,
-      ...sport,
+      ...economy, ...environment, ...police, ...society, ...sport
     ]);
   }, [economy, environment, police, society, sport]);
 
-  const handleSearch = async (query = searchQuery) => {
+  // ===== ⭐ 검색 기능 + 추천뉴스 동기화 =====
+  const handleSearch = (query = searchQuery) => {
     if (!query.trim()) return;
     setLoading(true);
     setTimeout(() => {
@@ -93,6 +97,12 @@ function Front() {
       );
       setArticles(filteredArticles);
       setLoading(false);
+
+      // ⭐ 검색어를 추천뉴스 API로 전달
+      fetch(`http://localhost:5000/recommend?query=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => setRecommended(data.data))
+        .catch(() => setRecommended([]));
     }, 1000);
   };
 
@@ -134,40 +144,47 @@ function Front() {
         </div>
       </div>
 
-      {/* 메인 콘텐츠 */}
-      <main className={styles.mainContent}>
-        {loading ? (
-          <div className={styles.loadingWrapper}>
-            <Loader2 className={`${styles.spinner} ${styles.large}`} size={32} />
-            <span>뉴스를 불러오는 중...</span>
-          </div>
-        ) : (
-          <>
-            <div className={styles.contentHeader}>
-              <h2 className={styles.contentTitle}>
-                {searchQuery ? `"${searchQuery}" 검색 결과` : `${selectedCategory} 뉴스`}
-              </h2>
-              <p className={styles.contentSubtitle}>
-                총 {articles.length}개의 기사를 찾았습니다.
-              </p>
+      {/* 본문+사이드 2단 구조 */}
+      <div className={styles.layoutRow}>
+        {/* 왼쪽: 뉴스 본문 */}
+        <main className={styles.mainContent}>
+          {loading ? (
+            <div className={styles.loadingWrapper}>
+              <Loader2 className={`${styles.spinner} ${styles.large}`} size={32} />
+              <span>뉴스를 불러오는 중...</span>
             </div>
+          ) : (
+            <>
+              <div className={styles.contentHeader}>
+                <h2 className={styles.contentTitle}>
+                  {searchQuery ? `"${searchQuery}" 검색 결과` : `${selectedCategory} 뉴스`}
+                </h2>
+                <p className={styles.contentSubtitle}>
+                  총 {articles.length}개의 기사를 찾았습니다.
+                </p>
+              </div>
+              {articles.length === 0 ? (
+                <div className={styles.noResults}>
+                  <Search size={48} />
+                  <h3>검색 결과가 없습니다</h3>
+                  <p>다른 검색어를 시도하거나 카테고리를 변경해 보세요.</p>
+                </div>
+              ) : (
+                <div className={styles.newsGrid}>
+                  {articles.map((article) => (
+                    <NewsCard key={article.id} article={article} />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </main>
+        {/* 오른쪽: AI 추천 뉴스 */}
+        <aside className={styles.recommendSidebar}>
+          <RecommendNews recommended={recommended} />
+        </aside>
+      </div>
 
-            {articles.length === 0 ? (
-              <div className={styles.noResults}>
-                <Search size={48} />
-                <h3>검색 결과가 없습니다</h3>
-                <p>다른 검색어를 시도하거나 카테고리를 변경해 보세요.</p>
-              </div>
-            ) : (
-              <div className={styles.newsGrid}>
-                {articles.map((article) => (
-                  <NewsCard key={article.id} article={article} />
-                ))}
-              </div>
-            )}
-          </>
-        )}
-      </main>
       {/* 푸터 */}
       <footer className={styles.footer}>
         <div className={styles.footerContent}>
@@ -177,5 +194,4 @@ function Front() {
     </div>
   );
 }
-
 export default Front;

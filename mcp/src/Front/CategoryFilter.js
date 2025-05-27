@@ -1,8 +1,7 @@
-// src/Front/CategoryFilter.js
 import React from 'react';
 import styles from './Front.module.css';
 
-export default function CategoryFilter({ categories, selectedCategory, onCategorySelect }) {
+function CategoryFilter({ categories, selectedCategory, onCategorySelect }) {
   return (
     <div className={styles.categoryFilters}>
       {categories.map((category) => (
@@ -17,3 +16,4 @@ export default function CategoryFilter({ categories, selectedCategory, onCategor
     </div>
   );
 }
+export default CategoryFilter;

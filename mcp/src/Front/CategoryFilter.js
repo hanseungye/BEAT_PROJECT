@@ -1,0 +1,19 @@
+// src/Front/CategoryFilter.js
+import React from 'react';
+import styles from './Front.module.css';
+
+export default function CategoryFilter({ categories, selectedCategory, onCategorySelect }) {
+  return (
+    <div className={styles.categoryFilters}>
+      {categories.map((category) => (
+        <button
+          key={category}
+          onClick={() => onCategorySelect(category)}
+          className={`${styles.categoryBtn} ${selectedCategory === category ? styles.active : ''}`}
+        >
+          {category}
+        </button>
+      ))}
+    </div>
+  );
+}
